@@ -1,4 +1,3 @@
-// src/pages/MessagesPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate, useParams, useLocation, useSearchParams } from 'react-router-dom';
@@ -22,12 +21,16 @@ const MessagesPage = () => {
   const [wsConnected, setWsConnected] = useState(false);
   const [isStartingNewConversation, setIsStartingNewConversation] = useState(false);
   const [recipientInfo, setRecipientInfo] = useState(null);
+  const [highlightMessageId, setHighlightMessageId] = useState(null);
   
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
-  const { conversationId } = useParams(); // This captures the ID from /messages/:id
+  const { conversationId } = useParams();
   const [searchParams] = useSearchParams();
   const isRecipient = searchParams.get('isRecipient') === 'true';
+  const messageId = searchParams.get('messageId');
+  const messagesContainerRef = useRef(null);
+ 
   
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -45,6 +48,41 @@ const MessagesPage = () => {
     }
   }, [navigate]);
 
+
+  const handleNotificationNavigation = async (messageId) => {
+    try {
+
+      const messageResponse = await getMessage(messageId);
+      const message = messageResponse.data;
+      
+      const targetConversation = conversations.find(c => c.id === message.conversationId);
+      
+      if (targetConversation) {
+        setCurrentConversation(targetConversation);
+        setIsStartingNewConversation(false);
+        setHighlightMessageId(messageId);
+
+        navigate(`/messages/${targetConversation.id}`, { replace: true });
+        
+        setTimeout(() => {
+          const messageElement = document.getElementById(`message-${messageId}`);
+          if (messageElement) {
+            messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            messageElement.classList.add('highlight-message');
+            
+            setTimeout(() => {
+              messageElement.classList.remove('highlight-message');
+              setHighlightMessageId(null);
+            }, 3000);
+          }
+        }, 500);
+      }
+    } catch (error) {
+      console.error('Error navigating to message from notification:', error);
+      navigate('/messages', { replace: true });
+    }
+  };
+
   useEffect(() => {
     if (!userId) return;
     
@@ -55,6 +93,11 @@ const MessagesPage = () => {
         const conversationsList = response.data;
         setConversations(conversationsList);
         setLoading(false);
+        
+        if (messageId) {
+          await handleNotificationNavigation(messageId);
+          return;
+        }
         
         if (conversationId && isRecipient) {
           const recipientId = conversationId; 
@@ -97,7 +140,7 @@ const MessagesPage = () => {
     };
     
     fetchAndProcessConversations();
-  }, [userId, conversationId, isRecipient, navigate]);
+  }, [userId, conversationId, isRecipient, messageId, navigate]);
 
   useEffect(() => {
     if (!userId) return;
@@ -134,6 +177,7 @@ const MessagesPage = () => {
 
     connectWebSocket(
       handleNewMessage, 
+      null, 
       () => {
         console.log('Connected to WebSocket');
         setWsConnected(true);
@@ -157,6 +201,16 @@ const MessagesPage = () => {
   useEffect(() => {
     currentConversationRef.current = currentConversation;
   }, [currentConversation]);
+
+  useEffect(() => {
+  if (messagesContainerRef.current) {
+    const container = messagesContainerRef.current;
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+  }, [messages]);
 
   const fetchRecipientInfo = async (recipientId) => {
     console.log("Fetching recipient info for ID:", recipientId);
@@ -240,7 +294,6 @@ const MessagesPage = () => {
       
       await apiSendMessage(otherUser.userId, content);
       
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
       console.error('Error sending message:', error);
       setError('Failed to send message. Please try again.');
@@ -288,6 +341,7 @@ const MessagesPage = () => {
   const selectConversation = (conversation) => {
     setCurrentConversation(conversation);
     setIsStartingNewConversation(false);
+    setHighlightMessageId(null); 
     navigate(`/messages/${conversation.id}`, { replace: true });
   };
 
@@ -298,6 +352,24 @@ const MessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-10 px-4 sm:px-6 lg:px-8">
+      {/* Add CSS for message highlighting */}
+      <style jsx={true}>{`
+        .highlight-message {
+          background-color: #fef3c7 !important;
+          border: 2px solid #f59e0b !important;
+          animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            border-color: #f59e0b;
+          }
+          50% {
+            border-color: #d97706;
+          }
+        }
+      `}</style>
+      
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="flex flex-col md:flex-row" style={{ height: "80vh" }}>
           {/* Conversations sidebar - fixed width */}
@@ -414,7 +486,7 @@ const MessagesPage = () => {
                 </div>
 
                 {/* Messages container - fixed height */}
-                <div className="flex-grow overflow-y-auto bg-gray-50 h-[calc(80vh-120px)]">
+                <div ref={messagesContainerRef} className="flex-grow overflow-y-auto bg-gray-50 h-[calc(80vh-120px)]">
                   {loadingMessages ? (
                     <div className="flex justify-center items-center h-full">
                       <div className="bg-white p-3 rounded-full shadow-md">
@@ -439,18 +511,23 @@ const MessagesPage = () => {
                   ) : (
                     <div className="p-3 space-y-2">
                       {messages.map(message => (
-                        <MessageBubble 
+                        <div
                           key={message.id}
-                          message={message}
-                          isMine={message.senderId === userId}
-                        />
+                          id={`message-${message.id}`}
+                          className={highlightMessageId === message.id ? 'highlight-message' : ''}
+                        >
+                          <MessageBubble 
+                            message={message}
+                            isMine={message.senderId === userId}
+                          />
+                        </div>
                       ))}
                       <div ref={messagesEndRef} />
                     </div>
                   )}
                 </div>
 
-                {/* Input for message in existing conversation - fixed height */}
+                {/* Input for message in existing conversation*/}
                 <div className="bg-gray-100 p-3 border-t border-gray-200">
                   <ChatInput 
                     onSendMessage={handleSendMessage} 
@@ -459,7 +536,6 @@ const MessagesPage = () => {
                 </div>
               </>
             ) : (
-              /* Empty state for no conversation selected - fixed height */
               <div className="flex flex-col items-center justify-center h-full bg-gray-50">
                 <div className="bg-white p-6 rounded-lg shadow-md text-center max-w-md">
                   <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -484,3 +560,4 @@ const MessagesPage = () => {
 }
 
 export default MessagesPage;
+                

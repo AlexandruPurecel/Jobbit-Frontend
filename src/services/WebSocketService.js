@@ -3,11 +3,12 @@ import SockJS from 'sockjs-client';
 import { jwtDecode } from 'jwt-decode';
 
 let stompClient = null;
-let subscribedCallbacks = [];
+let messageCallbacks = [];
+let notificationCallbacks = [];
 let connectedCallback = null;
 let errorCallback = null;
 
-export const connectWebSocket = (onMessageReceived, onConnected, onError) => {
+export const connectWebSocket = (onMessageReceived, onNotificationReceived, onConnected, onError) => {
   if (stompClient !== null && stompClient.connected) {
     return;
   }
@@ -24,8 +25,14 @@ export const connectWebSocket = (onMessageReceived, onConnected, onError) => {
   connectedCallback = onConnected;
   errorCallback = onError;
   
-  if (onMessageReceived && !subscribedCallbacks.includes(onMessageReceived)) {
-    subscribedCallbacks.push(onMessageReceived);
+  // Store message callbacks
+  if (onMessageReceived && !messageCallbacks.includes(onMessageReceived)) {
+    messageCallbacks.push(onMessageReceived);
+  }
+
+  // Store notification callbacks
+  if (onNotificationReceived && !notificationCallbacks.includes(onNotificationReceived)) {
+    notificationCallbacks.push(onNotificationReceived);
   }
 
   const socket = new SockJS('http://localhost:8080/ws');
@@ -43,9 +50,16 @@ export const connectWebSocket = (onMessageReceived, onConnected, onError) => {
   });
 
   stompClient.onConnect = (frame) => {
+    // Subscribe to messages
     stompClient.subscribe(`/user/${userId}/queue/messages`, (message) => {
       const receivedMessage = JSON.parse(message.body);
-      subscribedCallbacks.forEach(callback => callback(receivedMessage));
+      messageCallbacks.forEach(callback => callback(receivedMessage));
+    });
+
+    // Subscribe to notifications
+    stompClient.subscribe(`/user/${userId}/notifications`, (notification) => {
+      const receivedNotification = JSON.parse(notification.body);
+      notificationCallbacks.forEach(callback => callback(receivedNotification));
     });
 
     if (connectedCallback) {
@@ -69,20 +83,31 @@ export const disconnectWebSocket = () => {
   if (stompClient !== null) {
     stompClient.deactivate();
     stompClient = null;
-    subscribedCallbacks = [];
+    messageCallbacks = [];
+    notificationCallbacks = [];
     connectedCallback = null;
     errorCallback = null;
   }
 };
 
 export const addMessageListener = (callback) => {
-  if (callback && !subscribedCallbacks.includes(callback)) {
-    subscribedCallbacks.push(callback);
+  if (callback && !messageCallbacks.includes(callback)) {
+    messageCallbacks.push(callback);
   }
 };
 
 export const removeMessageListener = (callback) => {
-  subscribedCallbacks = subscribedCallbacks.filter(cb => cb !== callback);
+  messageCallbacks = messageCallbacks.filter(cb => cb !== callback);
+};
+
+export const addNotificationListener = (callback) => {
+  if (callback && !notificationCallbacks.includes(callback)) {
+    notificationCallbacks.push(callback);
+  }
+};
+
+export const removeNotificationListener = (callback) => {
+  notificationCallbacks = notificationCallbacks.filter(cb => cb !== callback);
 };
 
 export const isConnected = () => {

@@ -25,7 +25,7 @@ function App() {
    <BrowserRouter>
       <Navbar />
       <Routes>
-        {/* Public Routes */}
+        
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/job/:id" element={<JobPage />} />
@@ -33,68 +33,15 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/user/:id" element={<UserPage/>} />
         
-        {/* Protected Routes */}
-        <Route 
-          path="/my-profile" 
-          element={
-            <ProtectedRoute>
-              <MyProfile />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/add-job" 
-          element={
-            <ProtectedRoute>
-              <AddJobPage />
-            </ProtectedRoute>
-          } 
-        />
-  
-        <Route 
-          path="/edit-profile" 
-          element={
-            <ProtectedRoute>
-              <EditProfilePage />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/my-jobs" 
-          element={
-            <ProtectedRoute>
-              <UserPostedJobs />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/edit-job/:id" 
-          element={
-            <ProtectedRoute>
-              <EditJobPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/messages" element={
-          <ProtectedRoute>
-            <MessagesPage />
-          </ProtectedRoute>
-        } />
-        <Route path="/messages/:conversationId" element={
-          <ProtectedRoute>
-            <MessagesPage />
-          </ProtectedRoute>
-        } />
-        <Route
-          path="/admin"
-          element={
-            <AdminProtectedRoute>
-              <AdminPage />
-            </AdminProtectedRoute>
-          }
-        />
+        <Route path="/my-profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+        <Route path="/add-job" element={<ProtectedRoute><AddJobPage /></ProtectedRoute>} />
+        <Route path="/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
+        <Route path="/my-jobs" element={<ProtectedRoute><UserPostedJobs /></ProtectedRoute>} />
+        <Route path="/edit-job/:id" element={<ProtectedRoute><EditJobPage /></ProtectedRoute>} />
+        <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+        <Route path="/messages/:conversationId" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminProtectedRoute><AdminPage /></AdminProtectedRoute>} />
+
       </Routes>
     </BrowserRouter>
   );

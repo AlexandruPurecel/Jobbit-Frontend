@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getUser, getUserWithPostedJobs } from '../../api/UsersApi';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { ReviewSection, StarRating} from '../../components/review/ReviewComponent';
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [postedJobs, setPostedJobs] = useState([]);
   const [error, setError] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const { id } = useParams(); 
   const navigate = useNavigate();
 
@@ -29,10 +32,26 @@ export default function UserProfile() {
       }
     };
 
+    const getCurrentUserId = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          setCurrentUserId(decoded.userId);
+        } catch (error) {
+          console.error('Error decoding token:', error);
+          setCurrentUserId(null);
+        }
+      }
+    };
+
     fetchUserData()
+    getCurrentUserId()
   }, [id]);
 
-  if (loading) {
+  
+
+ if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="text-center">
@@ -70,7 +89,7 @@ export default function UserProfile() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-8">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
           {/* Profile Banner - with reduced height */}
@@ -102,6 +121,17 @@ export default function UserProfile() {
               <h2 className="text-3xl font-bold text-gray-800 mb-1">
                 {user.firstName} {user.lastName}
               </h2>
+              
+              {/* Add average rating display */}
+              {user.averageRating > 0 && (
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <StarRating rating={Math.round(user.averageRating)} size="sm" />
+                  <span className="text-sm text-gray-600">
+                    {user.averageRating.toFixed(1)} ({user.totalReviews} review{user.totalReviews !== 1 ? 's' : ''})
+                  </span>
+                </div>
+              )}
+              
               <p className="inline-flex items-center text-gray-600 bg-blue-50 px-4 py-1.5 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -214,7 +244,7 @@ export default function UserProfile() {
                 <h3 className="text-lg font-bold text-gray-800 flex items-center mb-5 relative">
                   <div className="bg-green-100 p-2 rounded-lg mr-3">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                   Jobs Posted by {user.firstName}
@@ -247,7 +277,7 @@ export default function UserProfile() {
                 <h3 className="text-lg font-bold text-gray-800 flex items-center mb-5 relative">
                   <div className="bg-green-100 p-2 rounded-lg mr-3">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                   Jobs Posted by {user.firstName}
@@ -256,7 +286,7 @@ export default function UserProfile() {
                 <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center">
                   <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                   <p className="text-gray-500 font-medium">No jobs posted yet</p>
@@ -264,6 +294,21 @@ export default function UserProfile() {
                 </div>
               </div>
             )}
+
+            {/* Review Section - Add this */}
+            <ReviewSection 
+              userId={id}
+              userName={user.firstName}
+              currentUserId={currentUserId}
+              onUserStatsUpdate={(newStats) => {
+                // Update user stats in real-time
+                setUser(prevUser => ({
+                  ...prevUser,
+                  averageRating: newStats.averageRating,
+                  totalReviews: newStats.totalReviews
+                }));
+              }}
+            />
            
             {/* Back Button at Bottom */}
             <div className="mt-8 text-center">

@@ -93,8 +93,6 @@ const JobPage = () => {
     );
   }
 
-  
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const options = { 
