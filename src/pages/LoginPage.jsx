@@ -39,7 +39,6 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-400 to-purple-500">
       <div className="w-full max-w-md">
-        {/* Card with glass effect */}
         <div className="bg-white bg-opacity-95 backdrop-filter backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-white border-opacity-30 transform transition-all">
           <div className="px-8 py-10">
             {/* Login Header */}

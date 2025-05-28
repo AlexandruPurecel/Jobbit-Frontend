@@ -184,7 +184,6 @@ useEffect(() => {
 
   
 
-  // Function to confirm and process deletion
   const handleConfirmDelete = async () => {
     if (!jobToDelete) return;
     

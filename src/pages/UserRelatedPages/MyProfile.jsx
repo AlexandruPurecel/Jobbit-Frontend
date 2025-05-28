@@ -11,7 +11,6 @@ export default function MyProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get current user ID from JWT token
     const token = localStorage.getItem('token');
     
     if (!token) {
@@ -163,7 +162,6 @@ export default function MyProfile() {
               </div>
             </div>
             
-            {/* Rest of your existing profile content... */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* About Section */}
               <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-sm border border-blue-100 overflow-hidden relative">

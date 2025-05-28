@@ -10,4 +10,6 @@ export const getJobWithImages = (id) => API.get(`${JOB_REST_API_BASE_URL}/image/
 
 export const getJobById = (id) => API.get(`${JOB_REST_API_BASE_URL}/${id}`)
 
-export const deleteJob = (id) => API.delete(`${JOB_REST_API_BASE_URL}/${id}`)
+export const deleteJob = (id) => API.delete(`${JOB_REST_API_BASE_URL}/delete/${id}`)
+
+export const updateJob = (job, id) => API.put(`${JOB_REST_API_BASE_URL}/update/${id}`, job)

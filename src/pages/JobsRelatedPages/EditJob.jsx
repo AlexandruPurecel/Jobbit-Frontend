@@ -4,7 +4,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { getAllCategories } from '../../api/CategoryApi';
 import { getAllLocations } from '../../api/LocationApi';
-import { getJobById, getJobWithImages } from '../../api/JobApi';
+import { getJobById, getJobWithImages, updateJob } from '../../api/JobApi';
 
 const EditJobPage = () => {
   const { id } = useParams();
@@ -283,12 +283,7 @@ const EditJobPage = () => {
       
       console.log('Sending updated job data:', updatedJobData);
       
-      const response = await axios.put(`http://localhost:8080/api/job/${id}`, updatedJobData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
+      const response = await updateJob(updatedJobData, id)
       console.log('Update response:', response.data);
       
       setSuccess('Job updated successfully!');
@@ -617,7 +612,6 @@ const EditJobPage = () => {
               </div>
             </div>
             
-            {/* Buttons */}
             <div className="flex justify-end space-x-4 pt-4">
               <button
                 type="button"

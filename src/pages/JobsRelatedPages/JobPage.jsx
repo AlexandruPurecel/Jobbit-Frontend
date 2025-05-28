@@ -109,7 +109,7 @@ const JobPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50" >
       <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">        
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Column - Images and Description */}
+          {/*Images and Description */}
           <div className="lg:w-2/3">
             {/* Image Carousel */}
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 border border-gray-100">
@@ -209,7 +209,7 @@ const JobPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Job Details */}
+          {/*Job Details */}
           <div className="lg:w-1/3">
             <div className="bg-white rounded-2xl shadow-sm p-8 lg:sticky lg:top-5 border border-gray-100">
               <h1 className="text-2xl font-bold text-gray-800 mb-4">{job.title}</h1>
@@ -266,7 +266,6 @@ const JobPage = () => {
                 </div>
               )}
 
-              {/* Posted on */}
               {job.createdAt && (
                 <div className="mb-8">
                   <span className="text-sm text-gray-500 block mb-2">Posted on</span>

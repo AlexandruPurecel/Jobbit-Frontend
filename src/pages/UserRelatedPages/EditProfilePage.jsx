@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { getUser } from '../../api/UsersApi';
+import { getUser, updateUser } from '../../api/UsersApi';
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
@@ -21,7 +21,6 @@ const EditProfilePage = () => {
   const [success, setSuccess] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  // Încarcă datele utilizatorului
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -51,12 +50,10 @@ const EditProfilePage = () => {
           setLoading(false);
         });
     } else {
-      // Redirect to login if no token
       navigate('/login');
     }
   }, [navigate]);
 
-  // Generează previzualizarea imaginii
   useEffect(() => {
     if (!selectedFile) return;
 
@@ -135,7 +132,6 @@ const EditProfilePage = () => {
     
     setSaving(true);
     
-    // Upload profile image first if selected
     if (selectedFile) {
       const imageUploadSuccess = await uploadProfileImage();
       if (!imageUploadSuccess) {
@@ -145,24 +141,20 @@ const EditProfilePage = () => {
     }
     
     try {
-      // Prepare user data for update
       const userData = {
         firstName,
         lastName,
         email,
         bio
-        // Profile picture ID is managed by the backend when uploading the image
       };
       
-      // Update user profile
-      const response = await axios.put(`http://localhost:8080/api/user/${userId}`, userData);
+      const response = await updateUser(userData, userId)
       
       setSuccess('Profile updated successfully!');
       
-      // Update user data in state
+
       setUser(response.data);
       
-      // Redirect to profile page after a short delay
       setTimeout(() => {
         navigate('/my-profile');
       }, 2000);

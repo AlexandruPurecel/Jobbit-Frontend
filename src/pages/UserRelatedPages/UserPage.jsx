@@ -92,7 +92,7 @@ export default function UserProfile() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-8">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
-          {/* Profile Banner - with reduced height */}
+          {/* Profile Banner*/}
           <div className="h-36 bg-gradient-to-r from-blue-600 to-indigo-600 relative overflow-hidden">
             {/* Decorative Elements */}
             <div className="absolute w-96 h-96 bg-white/10 rounded-full -top-20 -right-20"></div>
@@ -100,7 +100,7 @@ export default function UserProfile() {
             <div className="absolute w-32 h-32 bg-blue-400/20 rounded-full bottom-0 right-1/4 backdrop-blur-3xl"></div>
           </div>
 
-          {/* Profile Picture Container - with fixed positioning strategy */}
+          {/* Profile Picture Container */}
           <div className="flex justify-center">
             <div className="relative -mt-20 mb-2">
               <img
@@ -295,13 +295,12 @@ export default function UserProfile() {
               </div>
             )}
 
-            {/* Review Section - Add this */}
+            {/* Review Section*/}
             <ReviewSection 
               userId={id}
               userName={user.firstName}
               currentUserId={currentUserId}
               onUserStatsUpdate={(newStats) => {
-                // Update user stats in real-time
                 setUser(prevUser => ({
                   ...prevUser,
                   averageRating: newStats.averageRating,

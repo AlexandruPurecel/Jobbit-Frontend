@@ -4,7 +4,6 @@ const ChatInput = ({ onSendMessage, disabled, placeholder }) => {
   const [message, setMessage] = useState('');
   const inputRef = useRef(null);
 
-  // Focus pe input când se încarcă componenta
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -17,7 +16,6 @@ const ChatInput = ({ onSendMessage, disabled, placeholder }) => {
     onSendMessage(message);
     setMessage('');
     
-    // Focus înapoi pe input după trimitere
     if (inputRef.current) {
       inputRef.current.focus();
     }

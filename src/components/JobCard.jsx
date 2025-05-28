@@ -42,9 +42,9 @@ const JobCard = ({ job, imageUrl }) => {
         </div>
       </div>
      
-      {/* Job Content with Better Spacing */}
+      {/* Job Content */}
       <div className="flex flex-col flex-grow p-6 space-y-4">
-        {/* Header with Price */}
+        {/* Header*/}
         <div className="flex justify-between items-start gap-3">
           <h3 className="text-lg font-bold text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
             {job.title}
@@ -59,7 +59,7 @@ const JobCard = ({ job, imageUrl }) => {
           {job.description}
         </p>
        
-        {/* Footer with Details & Date */}
+        {/* Details & Date */}
         <div className="pt-4 mt-auto border-t border-gray-100">
           {job.createdAt && (
             <div className="text-xs text-gray-500 mb-4 flex items-center">

@@ -7,3 +7,5 @@ export const createUser = (user) => API.post(BASE_URL + "/new", user)
 export const getUser = (id) => API.get(`${BASE_URL}/${id}`)
 
 export const getUserWithPostedJobs = (id) => API.get(`${BASE_URL}/postedJobs/${id}`)
+
+export const updateUser = (user, id) => API.put(`${BASE_URL}/update/${id}`, user)

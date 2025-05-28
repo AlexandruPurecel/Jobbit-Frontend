@@ -49,7 +49,6 @@ const StarRating = ({ rating, size = 'md', interactive = false, onRatingChange =
   );
 };
 
-// Edit Review Form Component
 const EditReviewForm = ({ review, onReviewUpdated, onCancel }) => {
   const [rating, setRating] = useState(review.rating);
   const [comment, setComment] = useState(review.comment || '');
@@ -149,7 +148,6 @@ const EditReviewForm = ({ review, onReviewUpdated, onCancel }) => {
   );
 };
 
-// ReviewCard Component with edit functionality
 const ReviewCard = ({ review, isAdmin, currentUserId, onReviewDeleted, onReviewUpdated }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -188,9 +186,7 @@ const ReviewCard = ({ review, isAdmin, currentUserId, onReviewDeleted, onReviewU
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all duration-300 relative">
-      {/* Action Buttons */}
       <div className="absolute top-4 right-4 flex gap-2">
-        {/* Edit button for own reviews */}
         {isOwnReview && !isEditing && (
           <button
             onClick={() => setIsEditing(true)}
@@ -308,7 +304,6 @@ const ReviewStats = ({ stats }) => {
   );
 };
 
-// Direct Review Form Component
 const DirectReviewForm = ({ reviewedUserId, reviewedUserName, onReviewAdded, onCancel }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -472,19 +467,19 @@ const ReviewSection = ({ userId, userName, currentUserId, onUserStatsUpdate }) =
 
   const handleReviewAdded = (newReview) => {
     setReviews(prev => [newReview, ...prev]);
-    fetchStats(); // This will trigger onUserStatsUpdate
+    fetchStats(); 
   };
 
   const handleReviewUpdated = (updatedReview) => {
     setReviews(prev => prev.map(review => 
       review.reviewId === updatedReview.reviewId ? updatedReview : review
     ));
-    fetchStats(); // This will trigger onUserStatsUpdate
+    fetchStats(); 
   };
 
   const handleReviewDeleted = (reviewId) => {
     setReviews(prev => prev.filter(review => review.reviewId !== reviewId));
-    fetchStats(); // This will trigger onUserStatsUpdate
+    fetchStats(); 
   };
 
   if (loading) {
@@ -535,11 +530,10 @@ const ReviewSection = ({ userId, userName, currentUserId, onUserStatsUpdate }) =
           {stats && <ReviewStats stats={stats} />}
         </div>
         <div className="lg:col-span-2">
-          {/* Empty space or summary info */}
         </div>
       </div>
 
-      {/* Reviews list - full width below the stats */}
+      {/* Reviews list */}
       <div className="space-y-4">
         {reviews.length > 0 ? (
           reviews.map(review => (

@@ -23,7 +23,6 @@ const actionTypes = {
   SET_LOADING: 'SET_LOADING'
 };
 
-// Reducer
 const notificationReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.SET_NOTIFICATIONS:
@@ -88,34 +87,19 @@ const notificationReducer = (state, action) => {
   }
 };
 
-// Create context
 const NotificationContext = createContext();
 
-// Provider component
 export const NotificationProvider = ({ children }) => {
   const [state, dispatch] = useReducer(notificationReducer, initialState);
 
-  // Handle new notification from WebSocket
   const handleNewNotification = (notification) => {
     dispatch({ type: actionTypes.ADD_NOTIFICATION, payload: notification });
     
-    // Show browser notification if permission granted
-    if (Notification.permission === 'granted') {
-      new Notification('New Notification', {
-        body: notification.content,
-        icon: '/favicon.ico',
-        tag: `notification-${notification.id}` // Prevent duplicate notifications
-      });
-    }
   };
 
-  // Handle new message (also creates notification)
   const handleNewMessage = (message) => {
-    // Message handling can be done here if needed
-    // The notification will be handled by handleNewNotification
   };
 
-  // Actions
   const actions = {
     setNotifications: (notifications) => {
       dispatch({ type: actionTypes.SET_NOTIFICATIONS, payload: notifications });
@@ -147,14 +131,8 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  // Initialize WebSocket connection and load initial data
   useEffect(() => {
-    // Request notification permission
-    if (Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
 
-    // Connect WebSocket
     const onConnected = () => {
       dispatch({ type: actionTypes.SET_CONNECTED, payload: true });
     };
@@ -167,8 +145,6 @@ export const NotificationProvider = ({ children }) => {
     connectWebSocket(handleNewMessage, handleNewNotification, onConnected, onError);
     addNotificationListener(handleNewNotification);
     addMessageListener(handleNewMessage);
-
-    // Load initial unread count
     actions.loadUnreadCount();
 
     return () => {
@@ -189,7 +165,6 @@ export const NotificationProvider = ({ children }) => {
   );
 };
 
-// Hook to use notification context
 export const useNotifications = () => {
   const context = useContext(NotificationContext);
   if (!context) {

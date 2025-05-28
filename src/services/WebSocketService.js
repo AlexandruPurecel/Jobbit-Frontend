@@ -15,7 +15,7 @@ export const connectWebSocket = (onMessageReceived, onNotificationReceived, onCo
 
   const token = localStorage.getItem('token');
   if (!token) {
-    console.error('No token found, cannot connect to WebSocket');
+    console.error('cannot connect to WebSocket');
     return;
   }
 
@@ -25,12 +25,10 @@ export const connectWebSocket = (onMessageReceived, onNotificationReceived, onCo
   connectedCallback = onConnected;
   errorCallback = onError;
   
-  // Store message callbacks
   if (onMessageReceived && !messageCallbacks.includes(onMessageReceived)) {
     messageCallbacks.push(onMessageReceived);
   }
 
-  // Store notification callbacks
   if (onNotificationReceived && !notificationCallbacks.includes(onNotificationReceived)) {
     notificationCallbacks.push(onNotificationReceived);
   }
@@ -50,13 +48,11 @@ export const connectWebSocket = (onMessageReceived, onNotificationReceived, onCo
   });
 
   stompClient.onConnect = (frame) => {
-    // Subscribe to messages
     stompClient.subscribe(`/user/${userId}/queue/messages`, (message) => {
       const receivedMessage = JSON.parse(message.body);
       messageCallbacks.forEach(callback => callback(receivedMessage));
     });
 
-    // Subscribe to notifications
     stompClient.subscribe(`/user/${userId}/notifications`, (notification) => {
       const receivedNotification = JSON.parse(notification.body);
       notificationCallbacks.forEach(callback => callback(receivedNotification));

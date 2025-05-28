@@ -16,18 +16,16 @@ const ChatBadge = () => {
   };
   
   useEffect(() => {
-    // Initial fetch of unread count
     fetchUnreadCount();
     
-    // Setup message listener to update count in real-time
+    //update message in real time 
     const handleNewMessage = (message) => {
-      // Update unread count when a new message arrives
       fetchUnreadCount();
     };
     
     addMessageListener(handleNewMessage);
     
-    // Set up interval to periodically check for new messages (every 30 seconds)
+    //Interval to check for new messages
     const intervalId = setInterval(fetchUnreadCount, 30000);
     
     return () => {

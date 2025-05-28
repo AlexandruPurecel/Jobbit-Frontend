@@ -352,7 +352,6 @@ const MessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-10 px-4 sm:px-6 lg:px-8">
-      {/* Add CSS for message highlighting */}
       <style jsx={true}>{`
         .highlight-message {
           background-color: #fef3c7 !important;
@@ -372,7 +371,7 @@ const MessagesPage = () => {
       
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="flex flex-col md:flex-row" style={{ height: "80vh" }}>
-          {/* Conversations sidebar - fixed width */}
+          {/* Conversations sidebar*/}
           <div className="w-full md:w-1/3 bg-gray-50 border-r border-gray-200 h-full overflow-hidden">
             <div className="py-4 px-4 bg-gradient-to-r from-indigo-600 to-purple-600  hover:bg-purple-700 text-white h-16 flex items-center">
               <h2 className="text-lg font-semibold">Messages</h2>
@@ -440,7 +439,7 @@ const MessagesPage = () => {
                   </div>
                 </div>
                 
-                {/* Messages container - fixed height */}
+                {/* Messages container */}
                 <div className="flex-grow overflow-y-auto bg-gray-50 h-[calc(80vh-120px)]">
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center bg-white p-6 rounded-lg shadow-md max-w-md">
@@ -457,7 +456,7 @@ const MessagesPage = () => {
                   </div>
                 </div>
                 
-                {/* Input area - fixed height */}
+                {/* Input area*/}
                 <div className="bg-gray-100 p-3 border-t border-gray-200">
                   <ChatInput 
                     onSendMessage={handleSendFirstMessage} 
@@ -485,7 +484,7 @@ const MessagesPage = () => {
                   </div>
                 </div>
 
-                {/* Messages container - fixed height */}
+                {/* Messages container*/}
                 <div ref={messagesContainerRef} className="flex-grow overflow-y-auto bg-gray-50 h-[calc(80vh-120px)]">
                   {loadingMessages ? (
                     <div className="flex justify-center items-center h-full">
